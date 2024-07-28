@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import typing
 import urllib.parse
 import cli_exec
@@ -34,5 +36,5 @@ def get_pct_snapback_config(ct_id, ct_config: typing.Dict[str, str]):
 
 
 if __name__ == "__main__":
-    print(get_all_pct_ids(cli_exec.execute_pct_list()))
-    print(get_pct_snapback_config(200, parse_pct_config(cli_exec.execute_get_pct_config(200))))
+    print(get_all_pct_ids(cli_exec.execute_pct_list().stdout))
+    print(get_pct_snapback_config(200, parse_pct_config(cli_exec.execute_get_pct_config(200).stdout)))
