@@ -6,7 +6,7 @@ import cli_exec
 
 
 def get_all_pct_ids(pct_list_output):
-    lines = pct_list_output.split('\n')
+    lines = pct_list_output.strip().split('\n')
     pct_ids = []
     for line in lines[1:]:
         pct_ids.append(int(line[0:3]))
@@ -16,7 +16,7 @@ def get_all_pct_ids(pct_list_output):
 def parse_pct_config(pct_config_string):
     return dict((a.strip(), b.strip())
                 for a, b in (line.split(':', 1)
-                             for line in pct_config_string.split('\n')))
+                             for line in pct_config_string.strip().split('\n')))
 
 
 def is_ct_snapback_enabled(ct_config: typing.Dict[str, str]):
