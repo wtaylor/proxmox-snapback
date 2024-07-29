@@ -36,5 +36,6 @@ def get_pct_snapback_config(ct_id, ct_config: typing.Dict[str, str]):
 
 
 if __name__ == "__main__":
-    print(get_all_pct_ids(cli_exec.execute_pct_list().stdout))
-    print(get_pct_snapback_config(200, parse_pct_config(cli_exec.execute_get_pct_config(200).stdout)))
+    all_ct_ids = get_all_pct_ids(cli_exec.execute_pct_list())
+    all_ct_configs = [(ct_id, parse_pct_config(cli_exec.execute_get_pct_config(ct_id))) for ct_id in all_ct_ids]
+    ct_targets = [get_pct_snapback_config(ct_config[0], ct_config[1]) for ct_config in all_ct_configs if is_ct_snapback_enabled(ct_config[1])]
