@@ -1,5 +1,6 @@
 import cli_exec
 import subprocess
+import re
 
 valid_pct_list_output = """VMID       Status     Lock         Name
 101        stopped                 failsafe-vpn
@@ -35,6 +36,18 @@ def sample_pct_config_output(pct_id):
     return subprocess.CompletedProcess(stdout=valid_execute_pct_config_output, args=[], returncode=0)
 
 
+def sample_pvesm_path_output(volume_uid):
+    volume_name = re.split(r':|,', volume_uid)[1]
+    stdout = f"""
+/rpool/data/{volume_name}
+"""
+    return subprocess.CompletedProcess(stdout=stdout, args=[], returncode=0)
+
+
+def test_sample_pvesm_path_output_returns_expected_output():
+    assert sample_pvesm_path_output('local-zfs:subvol-101-disk-0').stdout.strip() == '/rpool/data/subvol-101-disk-0'
+
+
 def test_get_all_pct_ids_returns_list_of_pct_ids(monkeypatch):
     monkeypatch.setattr(cli_exec, '_raw_execute_pct_list', sample_pct_list_output)
     pct_ids = cli_exec.get_all_pct_ids()
@@ -51,6 +64,3 @@ def test_valid_pct_config_gets_converted_to_dict(monkeypatch):
     }
 
     assert required_config.items() <= config.items()
-
-
-

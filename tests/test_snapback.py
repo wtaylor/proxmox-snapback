@@ -1,5 +1,4 @@
 import snapback
-import cli_exec
 
 
 def test_is_ct_snapback_enabled_returns_true_when_snapback_is_enabled():
