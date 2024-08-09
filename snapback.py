@@ -37,7 +37,8 @@ def snapback_create(args):
     for snapback_config in snapback_configs:
         print(f"Snapshotting CT: {snapback_config['id']} - {snapback_config['hostname']}...")
         cli_exec.snapshot_ct(snapback_config['id'], args.id)
-        print(f"All CTs snapped successfully.")
+
+    print(f"All CTs snapped successfully.")
 
 
 def snapback_destroy(args):
@@ -49,7 +50,9 @@ def snapback_destroy(args):
     for snapback_config in snapback_configs:
         print(f"Deleting snapshot \"{args.id}\" on CT: {snapback_config['id']} - {snapback_config['hostname']}...")
         cli_exec.delete_snapshot(snapback_config['id'], args.id)
-        print(f"All CTs snapped successfully.")
+
+    print(f"All CTs snapped successfully.")
+
 
 def snapback_mount(args):
     snapback_configs = get_all_snapback_configs()
