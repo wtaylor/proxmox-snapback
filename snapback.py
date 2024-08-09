@@ -74,6 +74,7 @@ if __name__ == "__main__":
     mount_parser.add_argument("--mount_root", help="Parent directory to mount the snapshots in", required=True)
 
     destroy_parser = sub_parsers.add_parser("destroy", help="Destroy snapshots with the specified id for all CTs with a valid snapback config")
+    destroy_parser.set_defaults(func=snapback_destroy)
 
     args = root_parser.parse_args()
     args.func(args)
