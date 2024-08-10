@@ -65,3 +65,11 @@ def get_zfs_dataset_uid_of_ct_volume(volume_name):
     volume_components = volume_name.split(':')
     storage_pool_info = pvesh_get_json(f"/storage/{volume_components[0]}")
     return f"{storage_pool_info['pool']}/{volume_components[1]}"
+
+
+def _raw_execute_umount(path):
+    return subprocess.run(['umount', path], text=True, capture_output=True)
+
+
+def umount(path):
+    return _raw_execute_umount(path)

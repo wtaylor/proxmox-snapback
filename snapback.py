@@ -6,6 +6,7 @@ import cli_exec
 import argparse
 from pathlib import Path
 from os import listdir
+from os.path import isdir
 import logging
 
 
@@ -84,6 +85,26 @@ def snapback_mount(args, logger: logging.Logger) -> int:
     return 0
 
 
+def snapback_umount(args, logger: logging.Logger) -> int:
+    if not isdir(args.mountpoint):
+        logger.error(f"Root mount point: {args.mountpoint} does not exist, aborting.")
+        return 1
+
+    directories = [path_item for path_item in Path(args.mountpoint).iterdir() if isdir(path_item)]
+    for directory in directories:
+        logger.info(f"Unmounting {directory}...")
+        cli_exec.umount(directory.resolve())
+
+    logger.info("Cleaning up all mount points...")
+    for directory in directories:
+        if len(listdir(directory.resolve())) > 0:
+            logger.error(f"Mount point: {directory} is not empty, aborting deletion.")
+            return 1
+        directory.rmdir()
+
+    return 0
+
+
 if __name__ == "__main__":
     root_parser = argparse.ArgumentParser("snapback")
     sub_parsers = root_parser.add_subparsers(help="command help", required=True)
@@ -96,6 +117,10 @@ if __name__ == "__main__":
     mount_parser = sub_parsers.add_parser("mount", help="Mount all snapshots in a common root directory")
     mount_parser.add_argument("--mountpoint", help="Parent directory to mount the snapshots in", required=True)
     mount_parser.set_defaults(func=snapback_mount)
+
+    umount_parser = sub_parsers.add_parser("umount", help="Unmount all snapshots in a common root directory")
+    umount_parser.add_argument("--mountpoint", help="Parent directory to scan for unmounts", required=True)
+    umount_parser.set_defaults(func=snapback_umount)
 
     destroy_parser = sub_parsers.add_parser("destroy", help="Destroy snapshots with the specified id for all CTs with a valid snapback config")
     destroy_parser.set_defaults(func=snapback_destroy)
