@@ -69,8 +69,8 @@ def snapback_mount(args, logger: logging.Logger) -> int:
 
     for snapback_config in snapback_configs:
         for volume in snapback_config['target_volumes']:
-            zfs_snapshot_uid = cli_exec.get_zfs_dataset_uid_of_ct_volume(volume)
-            logger.debug(f"CT Volume: {volume} translated to ZFS Dataset: {zfs_snapshot_uid}")
+            zfs_snapshot_uid = f"{cli_exec.get_zfs_dataset_uid_of_ct_volume(volume)}@{args.id}"
+            logger.debug(f"CT Volume: {volume} translated to ZFS Dataset Snapshot: {zfs_snapshot_uid}@{args.id}")
 
             volume_mount_point = f"{args.mountpoint}/{volume.replace(':', '--')}"
             logger.info(f"Mounting {volume} to {volume_mount_point}...")
