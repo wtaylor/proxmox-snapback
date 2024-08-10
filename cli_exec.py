@@ -1,5 +1,5 @@
 import subprocess
-
+import json
 
 def _raw_execute_pct_list():
     return subprocess.run(['pct', 'list'], text=True, capture_output=True)
@@ -49,11 +49,19 @@ def _raw_execute_pvesm_path(volume_name):
     return subprocess.run(['pvesm', 'path', f'{volume_name}'], text=True, capture_output=True)
 
 
+def _raw_execute_pvesh_get_json(resource: str):
+    return subprocess.run(['pvesh', 'get', resource, '--output-format', 'json'], text=True, capture_output=True)
+
+
+def pvesh_get_json(resource: str):
+    return json.loads(_raw_execute_pvesh_get_json(resource).stdout)
+
+
 def mount_zfs_dataset_snapshot(zfs_dataset_snapshot_uid, mountpoint):
     return _raw_execute_snapshot_mount(zfs_dataset_snapshot_uid, mountpoint)
 
 
 def get_zfs_dataset_uid_of_ct_volume(volume_name):
-    hostpath = _raw_execute_pvesm_path(volume_name).stdout.strip()
-    return hostpath.split('/', 1)[1]
-# mount -t zfs rpool/data/subvol-203-disk-1@backup-2024-07-16 /mnt/backup/volume-snapshots/203-disk-1
+    volume_components = volume_name.split(':')
+    storage_pool_info = pvesh_get_json(f"/storage/{volume_components[0]}")
+    return f"{storage_pool_info['pool']}/{volume_components[1]}"
